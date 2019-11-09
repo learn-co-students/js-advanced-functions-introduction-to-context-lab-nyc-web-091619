@@ -85,13 +85,17 @@ function hoursWorkedOnDate(employeeObj, queryDate) {
     let clockOut = employeeObj.timeOutEvents.find(function(e) {
         return e.date === queryDate
     })
-    console.log(clockOut.hour)
-    console.log(clockIn.hour)
-    console.log((clockOut.hour - clockIn.hour) / 100)
+    // console.log(clockOut.hour)
+    // console.log(clockIn.hour)
+    // console.log((clockOut.hour - clockIn.hour) / 100)
     return (clockOut.hour - clockIn.hour) / 100
 }
 
-// 
+// This function takes an employee Object and uses the queryDate
+// argument to call the function hoursWorkedOnDate() and then
+// uses the employeeObj's .payPerHour value to calculate the
+// total wages for the day, parses it as a float and returns
+// it as a string
 function wagesEarnedOnDate(employeeObj, queryDate) {
         let wages = hoursWorkedOnDate(employeeObj, queryDate) 
         * employeeObj.payPerHour
@@ -99,26 +103,44 @@ function wagesEarnedOnDate(employeeObj, queryDate) {
     return parseFloat(wages.toString()) 
 }
 
+// This is a summing function to take all the days worked, using
+// the employees timeInEvents value (which is an array of javascript
+// objects) and then iterates through them using .map to get a new
+// array with all the work dates and sets this to the allDaysWorked
+// which is an array of dates:
+// eg. [ '2018-01-01', '2018-01-02', '2018-01-03' ]
+// It then iterates through these dates using the .reduce method and
+// sums up the total wages by calling wagesEarnedOnDate() on each
+// of the days in the allDaysWorked array and returns the total.
 function allWagesFor(employeeObj) {
     let allDaysWorked = employeeObj.timeInEvents.map(function(event){
         return event.date
     })
-
+    
+    // console.log(allDaysWorked)
+    
     let totalWages = allDaysWorked.reduce(function(sum, date){
         return sum + wagesEarnedOnDate(employeeObj, date)
-    }, 0)
+    }, 0)  // set starting value to 0
 
     return totalWages
 }
 
+// this function gets an array of all employee and iterates through 
+// the array using .find method to iterate through the employee array
+// and return the FIRST element that matches the testing function
+// (ie. employee.firstName == firstNameQuery)
 function findEmployeeByFirstName(allEmployeeArray, firstNameQuery) {
     return allEmployeeArray.find(function(employee) {
         return employee.firstName == firstNameQuery
     })
 }
 
+// This function returns the total payroll for all employees of the 
+// argument allEmployeeArray, which is an array of javascript employee
+// objects using the .reduce method to iterate through it.
 function calculatePayroll (allEmployeeArray) {
     return allEmployeeArray.reduce(function(sum, el) {
         return sum + allWagesFor(el)
-    }, 0)
+    }, 0)  // start at 0
 }
